@@ -13,8 +13,13 @@ class PetController extends Controller
     public function index()
     {
         $pets = Pet::all();
-
         return view('Listpage', compact('pets'));
+    }
+
+    public function show($id)
+    {
+        $pet = Pet::findOrFail($id);
+        return view('show', compact('pet'));
     }
 
     public function remove($id)

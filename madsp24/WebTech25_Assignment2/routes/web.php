@@ -12,3 +12,4 @@ Route::post('/create', [PetController::class, 'store'])->name('pets.store');
 
 Route::get('/Listpage', [PetController::class, 'index'])->name('Listpage');
 Route::delete('/pets/{id}', [PetController::class, 'remove'])->name('pets.destroy');
+Route::get('/pets/{id}/show', [PetController::class, 'show'])->name('pets.show');

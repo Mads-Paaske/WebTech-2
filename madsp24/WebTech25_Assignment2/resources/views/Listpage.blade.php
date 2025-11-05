@@ -26,7 +26,12 @@
 
                 <div class="ButtonsGrid">
                     <button class="PetActionButton" id="UpdateButton">Update listing</button>
-                    <button class="PetActionButton" id="ShowButton">More info</button>
+
+                    <form action="{{route('pets.show',$pet -> id)}}" method="POST">
+                        @method('GET')
+
+                        <button class="PetActionButton" id="ShowButton">More info</button>
+                    </form>
 
                     <form action="{{route('pets.destroy',$pet -> id)}}" method="POST">
                         @csrf
