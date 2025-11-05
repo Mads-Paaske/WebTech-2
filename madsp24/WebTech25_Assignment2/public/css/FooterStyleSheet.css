@@ -1,0 +1,29 @@
+.footerContainer
+{
+    background: darkolivegreen;
+    margin: 0;
+    justify-content: center;
+    padding: 5px;
+    margin-top: 15px;
+}
+.containerBlock
+{
+    display: block;
+}
+
+.footerText
+{
+    font-family: Arial, sans-serif, helvetica;
+    font-size: medium;
+    text-align: center;
+    color: white;
+}
+
+.footerTextContainer
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10%;
+}

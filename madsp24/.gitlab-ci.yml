@@ -1,0 +1,169 @@
+stages:
+  - preparation
+  - index
+  - create
+  - show
+  - update
+  - delete
+
+default:
+  image: 
+    name: thorjorgin/webtech-ci:0.3
+    pull_policy: if-not-present
+  cache:
+      - key: 
+          files: 
+            - WebTech25_Assignment2/composer.lock
+        paths:
+          - WebTech25_Assignment2/vendor
+        policy: pull-push
+  artifacts:
+    paths:
+      - WebTech25_Assignment2/vendor/
+    expire_in: 72h
+
+  before_script:
+    - cd ./WebTech25_Assignment2/
+    - export APP_PATH="$(pwd)"
+    - composer install
+    - php artisan dusk:chrome-driver
+    - export APP_URL=http://127.0.0.1:8000
+    - php artisan serve > /dev/null &
+
+
+
+restore:
+  stage: preparation
+  script:
+    # - npm install
+    - cp .env.example .env
+    - php artisan key:generate
+    - php artisan migrate
+
+
+
+"The page should list all resources from the database":
+  stage: index
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testListResources
+    
+"For each resource, there is a link/button to the Show page":
+  stage: index
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testShowLink
+
+"For each resource, there is a link/button to the Edit page":
+  stage: index
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testEditLink
+
+"There is a link/button to the Create page":
+  stage: index
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testCreateLink
+
+"For each resource, there is a link/button to the Delete page":
+  stage: index
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testDeleteLink
+
+
+"The Create page is in the correct URL":
+  stage: create
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testAccessCreate
+
+"A form element has been created, with the proper HTTP Method and action":
+  stage: create
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testFormExist
+
+"When submitting the form, the user is redirected to the index, and the newly created element is displayed":
+  stage: create
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testCreateResource
+
+"When the user is redirected to the index, a success message appears":
+  stage: create
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testSuccessMessage
+
+"The Show page is in the correct URL":
+  stage: show
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testAccessShow
+
+"For each different resource, different information is displayed":
+  stage: show
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testDifferentResources
+
+"The resource information is displayed correctly":
+  stage: show
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testResourceInfo
+
+
+"The Update page is in the correct URL":
+  stage: update
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testAccessUpdate
+
+"A form element has been created, with the proper HTTP Method and action":
+  stage: update
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testUpdateFormExist
+
+"The form element is correctly filled with the information from the resource being edited":
+  stage: update
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testUpdateFormFilled
+
+"When submitting the form, the user is redirected to the Show page, reflecting the changes":
+  stage: update
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testUpdateInformation
+
+"When the user is redirected, a success message appears":
+  stage: update
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testUpdateMessage
+
+
+"In the Index page, the elements have a form element with the proper HTTP Method and action":
+  stage: delete
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testDeleteFormExist
+
+"When submitting the form, the user is redirected to the index, and the newly deleted element cannot be found":
+  stage: delete
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testDeleteElement
+
+"When the user is redirected to the index, a success message appears":
+  stage: delete
+  needs: [restore]
+  script:
+    - php artisan dusk --filter testDeleteMessage
+
+# There is not a task for the testAccessDelete function
+
